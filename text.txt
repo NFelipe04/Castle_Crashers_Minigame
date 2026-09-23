@@ -1,0 +1,84 @@
+#projeto para passar do minigame e ganhar o achievement porque eu sou ruim de mais 
+
+#necessario: reconhecimento de imagens, inputs automaticos.
+
+
+#recomendado: o tal do programador aqui usar o cerebro
+
+
+1 -
+    #indentificador de imagens
+
+2 - 
+    incessor de inputs(com base no identificador de imagens)
+
+3 - 
+    main()
+
+
+
+
+
+yellow = [102, 227, 254]
+red = [102, 102, 254]
+green = [125, 254, 155]
+blue = [254, 165, 102]
+    
+
+    import cv2
+from PIL import Image
+import numpy as np
+
+def limites_yellow(color):
+
+    c = np.uint8([[color]])
+
+    hsvC = cv2.cvtColor(c, cv2.COLOR_BGR2HSV)
+
+    lowerLimit = hsvC[0][0][0] - 10, 153, 153
+    upperLimit = hsvC[0][0][0] + 10 , 255, 255
+
+    lowerLimit = np.array(lowerLimit, dtype=np.uint8)
+    upperLimit = np.array(upperLimit, dtype=np.uint8)
+
+    return lowerLimit, upperLimit
+
+yellow = [102, 227, 254]
+
+imagem = cv2.imread("Midias/castle_crashers01.png")
+
+imagem = cv2.resize(imagem, (900, 900))
+
+hsvImage = cv2.cvtColor(imagem, cv2.COLOR_BGR2HSV)
+
+lowerLimit, upperLimit = limites_yellow(color=yellow)
+
+mask = cv2.inRange(hsvImage, lowerLimit, upperLimit)
+
+mask_ = Image.fromarray(mask)
+
+contornos, _ = findContours = cv2.findContours(
+                mask,
+                cv2.RETR_EXTERNAL,
+                cv2.CHAIN_APPROX_SIMPLE)
+
+for contorno in contornos:
+    
+    x, y, w, h = cv2.boundingRect(contorno)
+
+    cv2.rectangle(
+        imagem,
+        (x, y),
+        (x + w, y + h),
+        (0, 255, 0), 2)
+
+cv2.imshow("frame", imagem)
+
+while True:
+
+    tecla = cv2.waitKey(1)
+
+    if tecla == 27:
+        break
+
+cv2.destroyAllWindows()
